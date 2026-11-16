@@ -103,7 +103,7 @@ Push-to-Talk auf K13 (halten), Dauermodus per Doppeldruck innerhalb von 350 ms, 
 
 ### 11. Display und Beleuchtung
 
-Das runde GC9A01-Display zeigt Uhrzeit, Layer, Agent-Zustand, Radial-Menü, Pegel und Akku. Helligkeit, Auto-Dimming, Abschaltintervall von 30 Sekunden bis eine Stunde (Standard drei Minuten) und Stromprofile `full`, `reduced`, `minimal` sind einstellbar. Statusänderungen und Eingaben schalten die Beleuchtung wieder ein.
+Das runde GC9A01-Display zeigt Uhrzeit, Layer, Agent-Zustand, Radial-Menü, Pegel und Akku. Helligkeit, Auto-Dimming, Abschaltintervall von 30 Sekunden bis eine Stunde (Standard drei Minuten) und Stromprofile `full`, `reduced`, `minimal` sind einstellbar. Statusänderungen und Eingaben schalten die Beleuchtung wieder ein. **Risiko [prüfen]:** Ob das Quantum Painter von QMK das GC9A01 auf dem STM32F411 mit dem begrenzten RAM (ein 240x240-Vollbild in RGB565 belegt etwa 115 KB) und neben Tastenscan, RGB-Updates und Raw HID ruckelfrei betreiben kann, ist nicht geprüft. Fallback: nur Teilbereiche zeichnen oder ein eigener schlanker Treiber.
 
 ### 12. Konfigurations-App und Profile
 

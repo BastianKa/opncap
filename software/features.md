@@ -191,7 +191,7 @@ Das runde Display als Statusfläche, für Endnutzer.
 5. Nach der Ruhezeit dimmt es und schaltet sich aus.
 
 **UI overview**
-Rundes 1,28-Zoll-Display mit Kreisgrafik, zentralem Text und Randanzeige für Akku und Verbindung. Helligkeit und Ruhezeit folgen den Beleuchtungseinstellungen, die Darstellung ist ein austauschbares Theme.
+Rundes 1,28-Zoll-Display mit Kreisgrafik, zentralem Text und Randanzeige für Akku und Verbindung. Helligkeit und Ruhezeit folgen den Beleuchtungseinstellungen, die Darstellung ist ein austauschbares Theme. Wie flüssig sich das Display auf dem BlackPill betreiben lässt, ist noch nicht geprüft; die Oberfläche muss mit Teilzeichnen auskommen.
 
 ---
 
