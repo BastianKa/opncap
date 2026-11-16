@@ -1,0 +1,117 @@
+# SPDX-License-Identifier: Apache-2.0
+# Single source of truth for the opncap raw HID protocol. Generate bindings with:
+#   python3 software/protocol/gen.py
+#
+# Frame (32 bytes, little-endian):
+#   0..1  magic    0x4F 0x43 ("OC")
+#   2     version  protocol version
+#   3     msg      message id
+#   4     seq      sequence number (host increments, device echoes in its reply)
+#   5     len      payload length, 0..24
+#   6..29 payload  zero-padded to 24 bytes
+#   30..31 crc     CRC-16/CCITT-FALSE over bytes 0..29
+protocol:
+  version: 1
+  frame_size: 32
+  magic: [0x4F, 0x43]
+  max_payload: 24
+  crc: crc16_ccitt_false   # poly 0x1021, init 0xFFFF, no reflection, no xorout
+
+enums:
+  state:            # overall state, used by `micro-state`
+    "off": 0   # quoted: unquoted off is a YAML boolean
+    idle: 1
+    thinking: 2
+    done: 3
+    input: 4
+    error: 5
+  direction:        # joystick direction
+    center: 0
+    up: 1
+    up_right: 2
+    right: 3
+    down_right: 4
+    down: 5
+    down_left: 6
+    left: 7
+    up_left: 8
+  ack_status:
+    ok: 0
+    unknown_message: 1
+    bad_payload: 2
+    busy: 3
+
+messages:
+  # host -> device
+  get_version:
+    id: 0x01
+    dir: command
+    fields: []
+  set_led:
+    id: 0x02
+    dir: command
+    fields:
+      - {name: index, type: u8}
+      - {name: r, type: u8}
+      - {name: g, type: u8}
+      - {name: b, type: u8}
+  set_state:
+    id: 0x03
+    dir: command
+    fields:
+      - {name: state, type: u8, enum: state}
+  set_agent_state:
+    id: 0x04
+    dir: command
+    fields:
+      - {name: slot, type: u8}          # agent key 0..5
+      - {name: state, type: u8, enum: state}
+  set_display:
+    id: 0x05
+    dir: command
+    fields:
+      - {name: view, type: u8}
+      - {name: arg, type: u8}
+  set_config:
+    id: 0x06
+    dir: command
+    fields:
+      - {name: key, type: u8}
+      - {name: value, type: u16}
+  # device -> host
+  ack:
+    id: 0x70
+    dir: event
+    fields:
+      - {name: msg, type: u8}           # id of the acknowledged command
+      - {name: status, type: u8, enum: ack_status}
+  version_info:
+    id: 0x71
+    dir: event
+    fields:
+      - {name: protocol, type: u8}
+      - {name: major, type: u8}
+      - {name: minor, type: u8}
+      - {name: patch, type: u8}
+  key_event:
+    id: 0x80
+    dir: event
+    fields:
+      - {name: key, type: u8}           # matrix position 0..15
+      - {name: pressed, type: u8}
+  encoder_event:
+    id: 0x81
+    dir: event
+    fields:
+      - {name: delta, type: i8}
+  joystick_event:
+    id: 0x82
+    dir: event
+    fields:
+      - {name: direction, type: u8, enum: direction}
+      - {name: slot, type: u8}          # radial slot 0..6, 0xFF = none
+  layer_event:
+    id: 0x83
+    dir: event
+    fields:
+      - {name: layer, type: u8}

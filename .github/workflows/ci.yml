@@ -1,0 +1,22 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  software:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Generated protocol files are up to date, Python and C tests pass
+        working-directory: software
+        run: make test
+  # QMK firmware build and a Zephyr placeholder follow with the firmware (feature 3).
