@@ -12,7 +12,7 @@ import yaml
 
 HERE = Path(__file__).resolve().parent
 SRC = HERE / "protocol.yaml"
-OUT_C = HERE / "generated" / "opncap_protocol.h"
+OUT_C = HERE.parent / "firmware" / "qmk_userspace" / "keyboards" / "opncap" / "opncap_v0_3" / "opncap_protocol.h"
 OUT_PY = HERE.parent / "host" / "opncap_host" / "protocol.py"
 
 SIZES = {"u8": 1, "i8": 1, "u16": 2, "i16": 2}

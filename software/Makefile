@@ -10,5 +10,5 @@ test-py:
 	cd host && python3 -m unittest discover -s tests -v
 test-c:
 	mkdir -p build
-	cc -std=c11 -Wall -Wextra -Werror -Iprotocol/generated protocol/tests/test_protocol.c -o build/test_protocol
+	cc -std=c11 -Wall -Wextra -Werror -Ifirmware/qmk_userspace/keyboards/opncap/opncap_v0_3 protocol/tests/test_protocol.c -o build/test_protocol
 	build/test_protocol protocol/tests/vectors.txt

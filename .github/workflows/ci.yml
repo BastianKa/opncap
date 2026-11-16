@@ -19,4 +19,30 @@ jobs:
       - name: Generated protocol files are up to date, Python and C tests pass
         working-directory: software
         run: make test
-  # QMK firmware build and a Zephyr placeholder follow with the firmware (feature 3).
+
+  firmware:
+    runs-on: ubuntu-latest
+    env:
+      # Pinned QMK commit (master, 2026-11-15).
+      QMK_REF: 8252b6309752f0be6882c387e15989ba51323d8f
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi binutils-arm-none-eabi
+      - run: pip install qmk
+      - name: Fetch pinned QMK firmware
+        run: |
+          git init qmk_firmware
+          cd qmk_firmware
+          git remote add origin https://github.com/qmk/qmk_firmware.git
+          git fetch --depth 1 origin "$QMK_REF"
+          git checkout FETCH_HEAD
+          git submodule update --init --recursive --depth 1 --jobs 8
+      - name: Build opncap v0.3 firmware
+        run: |
+          export QMK_HOME="$PWD/qmk_firmware"
+          qmk config user.overlay_dir="$PWD/software/firmware/qmk_userspace"
+          qmk compile -kb opncap/opncap_v0_3 -km default
+  # A Zephyr placeholder workflow for the BLE bridge follows with phase 2.

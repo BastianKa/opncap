@@ -1,0 +1,6 @@
+{
+    "userspace_version": "1.0",
+    "build_targets": [
+        ["opncap/opncap_v0_3", "default"]
+    ]
+}
