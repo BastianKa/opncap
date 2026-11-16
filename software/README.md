@@ -6,7 +6,7 @@ Reference hardware is `hardware/opncap_v0.3`. See `spec.md` and `features.md` fo
 | Path | Content | Status |
 |---|---|---|
 | `protocol/` | Raw HID protocol v1 (YAML source, generator, shared test vectors) | built, tested in CI |
-| `host/` | Python host package (`opncap_host`), protocol bindings are generated | protocol only |
+| `host/` | Python host package (`opncap_host`): protocol, transport, client, CLI `micro-state` | tested with a fake pad only |
 | `firmware/` | QMK userspace for the BlackPill F411 (keys, layers, encoder, joystick, raw HID) | written; builds in CI (pinned QMK), **not tested on hardware** |
 | `docs/` | Licensing and other docs | started |
 

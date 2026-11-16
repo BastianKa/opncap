@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Lets the logged-in user open the opncap raw HID interface without root.
+# Install: sudo cp 99-opncap.rules /etc/udev/rules.d/ && sudo udevadm control --reload && sudo udevadm trigger
+# VID/PID are placeholders (see firmware keyboard.json).
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="feed", ATTRS{idProduct}=="0003", MODE="0660", TAG+="uaccess"

@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: Apache-2.0
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "opncap-host"
+version = "0.1.0"
+description = "Host software for the opncap macropad"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+dependencies = ["hid>=1.0.6"]
+
+[project.scripts]
+micro-state = "opncap_host.cli:run"
+
+[tool.setuptools]
+packages = ["opncap_host"]
