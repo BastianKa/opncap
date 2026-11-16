@@ -42,7 +42,9 @@ jobs:
           git submodule update --init --recursive --depth 1 --jobs 8
       - name: Build opncap v0.3 firmware
         run: |
+          # The qmk CLI did not accept the overlay directory (invalid keyboard_folder),
+          # so the keyboard is copied into the pinned QMK checkout instead.
           export QMK_HOME="$PWD/qmk_firmware"
-          qmk config user.overlay_dir="$PWD/software/firmware/qmk_userspace"
+          cp -r software/firmware/qmk_userspace/keyboards/opncap "$QMK_HOME/keyboards/"
           qmk compile -kb opncap/opncap_v0_3 -km default
   # A Zephyr placeholder workflow for the BLE bridge follows with phase 2.
