@@ -5,8 +5,8 @@ QMK external userspace for the WeAct BlackPill F411 (GPL-2.0-or-later). Keyboard
 
 Status: builds and links in CI against a pinned QMK commit (the binary is uploaded as a CI artifact). **Not tested on hardware.**
 
-Done: 4x4 matrix (14 keys, encoder push, joystick push), six layers (K11 cycles them), encoder events, Hall joystick with start calibration and min/max tracking (8 directions, 7 radial slots), raw HID with `get_version` and acknowledgements.
-Not yet: RGB (feature 5), display (feature 12), microphone, joystick/encoder per-layer configuration, USB VID/PID (placeholder `0xFEED:0x0003`).
+Done: 4x4 matrix (14 keys, encoder push, joystick push), six layers (K11 cycles them), encoder events, Hall joystick with start calibration and min/max tracking (8 directions, 7 radial slots), raw HID with `get_version` and acknowledgements, RGB matrix on a WS2812 chain (B4, PWM+DMA, 23 LEDs) with agent status colors: `set_agent_state` drives K1 to K6, `set_state` drives the status LED (white idle, blue thinking, green done, orange input, red error, off).
+Not yet: pulsing of the selected agent key, brightness/dim profiles (feature 13), display (feature 12), microphone, joystick/encoder per-layer configuration, USB VID/PID (placeholder `0xFEED:0x0003`).
 
 Host discovery: raw HID usage page `0xFF60`, usage `0x61` (QMK defaults).
 

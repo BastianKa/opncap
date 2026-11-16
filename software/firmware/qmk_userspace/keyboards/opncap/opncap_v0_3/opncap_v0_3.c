@@ -168,6 +168,50 @@ void housekeeping_task_kb(void) {
     housekeeping_task_user();
 }
 
+// --- agent status LEDs -----------------------------------------------------------
+// Agent keys K1..K6 show the state of one agent session each, the status LED shows the
+// most urgent one. LED indices follow the data order in hardware/pinout.md.
+
+#define AGENT_SLOTS 6
+#define STATUS_LED 12
+static const uint8_t slot_led[AGENT_SLOTS] = {0, 1, 2, 3, 7, 6}; // K1, K2, K3, K4, K5, K6
+
+static uint8_t agent_state[AGENT_SLOTS]; // OPNCAP_STATE_* values, all off at start
+static uint8_t overall_state;
+
+static void state_color(uint8_t state, uint8_t *r, uint8_t *g, uint8_t *b) {
+    switch (state) {
+        case OPNCAP_STATE_IDLE:     *r = 255; *g = 255; *b = 255; break; // white
+        case OPNCAP_STATE_THINKING: *r = 0;   *g = 0;   *b = 255; break; // blue
+        case OPNCAP_STATE_DONE:     *r = 0;   *g = 255; *b = 0;   break; // green
+        case OPNCAP_STATE_INPUT:    *r = 255; *g = 100; *b = 0;   break; // orange
+        case OPNCAP_STATE_ERROR:    *r = 255; *g = 0;   *b = 0;   break; // red
+        default:                    *r = 0;   *g = 0;   *b = 0;   break; // off
+    }
+}
+
+static void set_state_led(uint8_t led, uint8_t state, uint8_t led_min, uint8_t led_max) {
+    if (led < led_min || led >= led_max) {
+        return;
+    }
+    uint8_t r, g, b;
+    state_color(state, &r, &g, &b);
+    // Scale by the configured brightness so the USB current limit holds.
+    uint8_t v = rgb_matrix_get_val();
+    rgb_matrix_set_color(led, (uint16_t)r * v / 255, (uint16_t)g * v / 255, (uint16_t)b * v / 255);
+}
+
+bool rgb_matrix_indicators_advanced_kb(uint8_t led_min, uint8_t led_max) {
+    if (!rgb_matrix_indicators_advanced_user(led_min, led_max)) {
+        return false;
+    }
+    for (uint8_t i = 0; i < AGENT_SLOTS; i++) {
+        set_state_led(slot_led[i], agent_state[i], led_min, led_max);
+    }
+    set_state_led(STATUS_LED, overall_state, led_min, led_max);
+    return true;
+}
+
 // --- raw HID from the host -----------------------------------------------------
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
@@ -181,9 +225,27 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             send_frame(OPNCAP_MSG_VERSION_INFO, f.seq, p, 4);
             break;
         }
+        case OPNCAP_MSG_SET_STATE:
+            if (f.len != OPNCAP_MSG_SET_STATE_SIZE || f.payload[OPNCAP_MSG_SET_STATE_STATE_OFFSET] > OPNCAP_STATE_ERROR) {
+                send_ack(f.seq, f.msg, OPNCAP_ACK_STATUS_BAD_PAYLOAD);
+                break;
+            }
+            overall_state = f.payload[OPNCAP_MSG_SET_STATE_STATE_OFFSET];
+            send_ack(f.seq, f.msg, OPNCAP_ACK_STATUS_OK);
+            break;
+        case OPNCAP_MSG_SET_AGENT_STATE: {
+            uint8_t slot  = f.payload[OPNCAP_MSG_SET_AGENT_STATE_SLOT_OFFSET];
+            uint8_t state = f.payload[OPNCAP_MSG_SET_AGENT_STATE_STATE_OFFSET];
+            if (f.len != OPNCAP_MSG_SET_AGENT_STATE_SIZE || slot >= AGENT_SLOTS || state > OPNCAP_STATE_ERROR) {
+                send_ack(f.seq, f.msg, OPNCAP_ACK_STATUS_BAD_PAYLOAD);
+                break;
+            }
+            agent_state[slot] = state;
+            send_ack(f.seq, f.msg, OPNCAP_ACK_STATUS_OK);
+            break;
+        }
         default:
-            // set_led, set_state, set_agent_state, set_display and set_config arrive with
-            // the LED, display and configuration features.
+            // set_led, set_display and set_config arrive with the display and configuration features.
             send_ack(f.seq, f.msg, OPNCAP_ACK_STATUS_UNKNOWN_MESSAGE);
             break;
     }

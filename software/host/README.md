@@ -3,7 +3,7 @@
 
 Python package `opncap_host`: protocol bindings (generated, `protocol.py`), transport (raw HID through the `hid` package), a request/reply client and the CLI `micro-state`.
 
-Status: tested against a fake pad only. **Not tested with a real device.** The firmware answers `set_state` with `unknown_message` until the LED feature exists, so `micro-state` currently exits with code 5 on real hardware.
+Status: tested against a fake pad only. **Not tested with a real device.** A pad with firmware older than the LED support answers `set_state` with `unknown_message`, so `micro-state` exits with code 5 there.
 
 ```sh
 pip install ./software/host        # installs the `micro-state` command and `hid`
@@ -24,4 +24,4 @@ Linux: copy `udev/99-opncap.rules` to `/etc/udev/rules.d/` and reload udev. macO
 
 Mapping (hook event to LED state): `SessionStart` idle, `UserPromptSubmit` and `PreToolUse` thinking, `PermissionRequest` and `Notification` (`permission_prompt`, `idle_prompt`) input, `Stop` done, `StopFailure` error, `SessionEnd` off. Each Claude Code session gets one of the six agent slots by `session_id`. The status light shows the most urgent state. A session stuck in "thinking" for 120 s falls back to idle, because `Stop` does not fire when you interrupt.
 
-Status: tested with a fake pad and a real Unix socket, **not with a live Claude Code session or a real pad**. The firmware does not drive LEDs yet and answers these commands with `unknown_message`; the daemon logs that and keeps running. Not yet built: `PostToolUseFailure` flash, tray icon, autostart, pinned/recent chat ordering.
+Status: tested with a fake pad and a real Unix socket, **not with a live Claude Code session or a real pad**. The firmware drives the LEDs (see `firmware/README.md`, itself untested on hardware); a pad with older firmware answers with `unknown_message`, the daemon logs that and keeps running. Not yet built: `PostToolUseFailure` flash, tray icon, autostart, pinned/recent chat ordering.
