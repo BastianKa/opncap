@@ -13,6 +13,8 @@ dependencies = ["hid>=1.0.6"]
 
 [project.scripts]
 micro-state = "opncap_host.cli:run"
+opncap-daemon = "opncap_host.daemon:run"
+micro-hook = "opncap_host.hook:run"
 
 [tool.setuptools]
-packages = ["opncap_host"]
+packages = ["opncap_host", "opncap_host.adapters"]
