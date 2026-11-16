@@ -35,7 +35,7 @@ Merge the `hooks` block of `docs/claude-code-hooks.json` into `~/.claude/setting
 | Ask for something that needs permission (for example run a shell command) | `'PermissionRequest' ... -> input`, and the daemon waits up to 25 s |
 | Leave Claude Code idle at the prompt for a while | a `'Notification' notification_type='idle_prompt' ... -> input` |
 | Interrupt a running answer with Esc | no `Stop` line (expected); after 120 s the session falls back to idle |
-| Exit the session | `'SessionEnd' ... -> off`-like end of the session |
+| Exit the session | `'SessionEnd' ... -> end` |
 | Open two sessions in two terminals | different `session=` prefixes |
 
 ## 5. What to report back
