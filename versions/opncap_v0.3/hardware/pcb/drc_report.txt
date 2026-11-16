@@ -1,0 +1,11 @@
+** Drc report for opncap.kicad_pcb **
+
+** Found 0 DRC violations **
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** End of Report **
+
+Tool: KiCad pcbnew 7.0.11 (pcbnew.WriteDRCReport), zones refilled before the check.

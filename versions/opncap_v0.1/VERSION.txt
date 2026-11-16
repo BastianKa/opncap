@@ -1,0 +1,13 @@
+opncap Hardware v0.1
+
+Stand: 2026-11-14 (Git-Commit 827a217)
+Inhalt: MX-Hotswap, 0,91-Zoll-OLED (I2C), 6 Grad Neigung, Platine 102 x 137 mm
+Status: nur in Software geprueft, nichts bestellt oder an Hardware getestet.
+
+Ordner:
+  README.md, Makefile     Ueberblick und Build-Einstieg
+  docs/                   Pinbelegung
+  hardware/pcb/           KiCad-Projekt, DRC-Bericht, Gerber, Stueckliste, Positionen
+  hardware/enclosure/     CadQuery-Skript, Pruefergebnis, export/ mit STEP und STL
+  hardware/renders/       Renderbilder und Turntable
+  hardware/scripts/       Generatoren

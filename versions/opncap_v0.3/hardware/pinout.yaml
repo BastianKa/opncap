@@ -1,0 +1,78 @@
+# SPDX-License-Identifier: Apache-2.0
+# opncap pin assignment for the WeAct BlackPill F411 (STM32F411CEU6) prototype.
+# This file is the single source: hardware/scripts/gen_pcb.py reads it for the
+# netlist, hardware/scripts/gen_pinout.py renders hardware/pinout.md and
+# docs/pinout.md from it.
+# Status: generated design, not verified on hardware. Check the header pin
+# order against the silkscreen of your BlackPill revision before soldering.
+
+mcu:
+  board: WeAct BlackPill F411 (STM32F411CEU6)
+  mounting: under the main PCB on low-profile socket strips, component side facing the main PCB, USB-C to the back
+
+signals:
+  # matrix, COL2ROW (diode anode on the switch, cathode on the row)
+  COL0: {pin: B0, function: matrix column 0, note: "K1 K5 K9 + encoder push"}
+  COL1: {pin: B1, function: matrix column 1, note: "K2 K6 K10 K13"}
+  COL2: {pin: A6, function: matrix column 2, note: "K3 K7 K11 K14"}
+  COL3: {pin: A5, function: matrix column 3, note: "K4 K8 K12 + joystick push"}
+  ROW0: {pin: A4, function: matrix row 0, note: "K1..K4"}
+  ROW1: {pin: A3, function: matrix row 1, note: "K5..K8"}
+  ROW2: {pin: A7, function: matrix row 2, note: "K9..K12"}
+  ROW3: {pin: B8, function: matrix row 3, note: "encoder push, K13, K14, joystick push"}
+  # encoder
+  ENC_A: {pin: B6, function: encoder phase A, note: "TIM4_CH1, internal pull-up, common pin to GND"}
+  ENC_B: {pin: B7, function: encoder phase B, note: "TIM4_CH2, internal pull-up"}
+  # joystick
+  JOY_X: {pin: A1, function: joystick X, note: "ADC1_IN1"}
+  JOY_Y: {pin: A2, function: joystick Y, note: "ADC1_IN2"}
+  # round display, GC9A01 over 4-wire SPI (write only, no MISO)
+  DISP_SCK: {pin: B13, function: display SPI clock, note: "SPI2_SCK, module pin SCL"}
+  DISP_MOSI: {pin: B15, function: display SPI data, note: "SPI2_MOSI, module pin SDA"}
+  DISP_DC: {pin: B14, function: display data/command, note: "GPIO"}
+  DISP_CS: {pin: B12, function: display chip select, note: "GPIO, active low"}
+  DISP_RST: {pin: A8, function: display reset, note: "GPIO, active low"}
+  DISP_BL: {pin: B9, function: display backlight, note: "TIM4_CH4 for PWM dimming, high = on"}
+  # RGB
+  RGB_3V3: {pin: B4, function: LED data (3.3 V), note: "TIM3_CH1, goes through 74AHCT125 to 5 V (NJTRST pin, free with SWD)"}
+  # microphone, PDM (Infineon IM69D130)
+  MIC_CLK: {pin: B3, function: microphone clock, note: "I2S3_CK, 1 to 3.3 MHz (JTDO pin, free with SWD)"}
+  MIC_DATA: {pin: B5, function: microphone data, note: "I2S3_SD, PDM bit stream"}
+
+power:
+  "+5V": USB VBUS from the BlackPill 5V pins; LEDs and level shifter
+  "+3V3": BlackPill regulator; display (about 30 to 50 mA with backlight) and joystick
+  GND: common ground, poured on both layers
+
+reserved:
+  A0: user key on the BlackPill
+  A9: USART1_TX, kept free for the phase 2 BLE bridge
+  A10: USART1_RX, kept free for the phase 2 BLE bridge
+  A11: USB D-
+  A12: USB D+
+  A15: free (I2S3_WS, not needed for PDM)
+  B2: BOOT1
+  C13: on-board LED
+
+matrix:
+  rows: [ROW0, ROW1, ROW2, ROW3]
+  cols: [COL0, COL1, COL2, COL3]
+  layout:
+    - [K1, K2, K3, K4]
+    - [K5, K6, K7, K8]
+    - [K9, K10, K11, K12]
+    - [ENC_PUSH, K13, K14, JOY_PUSH]
+
+led_chain:
+  # index in the data chain, starting at 0
+  per_key: [K1, K2, K3, K4, K8, K7, K6, K5, K9, K10, K11, K12, STATUS, K14, K13]
+  underglow: [UG1, UG2, UG3, UG4, UG5, UG6, UG7, UG8]
+
+layout_ascii: |
+   ( ENC )     ( DISPLAY )     ( JOY )
+
+          [K1]  [K2]  [K3]  [K4]
+          [K5]  [K6]  [K7]  [K8]
+          [K9]  [K10] [K11] [K12]
+
+           (mic) [K13] [K14] (status)

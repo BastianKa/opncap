@@ -1,0 +1,13 @@
+opncap Hardware v0.2
+
+Stand: 2026-11-15 (Git-Commit 8a759ad)
+Inhalt: Kailh Choc V1 Hotswap, rundes GC9A01-Display (SPI), flach, Platine 102 x 137 mm, Stueckliste mit exakten Teilenummern
+Status: nur in Software geprueft, nichts bestellt oder an Hardware getestet.
+
+Ordner:
+  README.md, Makefile     Ueberblick und Build-Einstieg
+  docs/                   Pinbelegung
+  hardware/pcb/           KiCad-Projekt, DRC-Bericht, Gerber, Stueckliste, Positionen
+  hardware/enclosure/     CadQuery-Skript, Pruefergebnis, export/ mit STEP und STL
+  hardware/renders/       Renderbilder und Turntable
+  hardware/scripts/       Generatoren

@@ -1,0 +1,6 @@
+PASS PCB outline fits the shell: KiCad outline 96.00 x 127.20 mm, clearance left/right/back/front = 0.50, 0.50, 0.50, 0.50 mm (need >= 0.30)
+PASS mounting holes line up with standoffs: 6 holes read from the KiCad board, worst axis offset 0.000 mm, misaligned: none
+PASS plate cut-outs match switch positions: 14 switches, worst centre offset 0.0000 mm, worst size error 0.0000 mm (limit 0.05)
+PASS USB-C notch lines up with the BlackPill: notch centre x=48.00, connector x=48.00 z=-3.91, notch 12.5 mm wide, 1.87 mm free above and 2.20 mm below the connector, connector front 2.03 mm behind the outer wall
+PASS microphone channel and status window sit over their parts: sound port on the board (19.22, 110.67), channel 1.6 mm, offset 0.000 mm; status LED13 (76.58, 110.67), window 5.0 mm, offset 0.000 mm
+PASS no part collisions: 70 overlapping bounding-box pairs tested by boolean intersection, collisions: none

@@ -1,0 +1,13 @@
+opncap Hardware v0.3
+
+Stand: 2026-11-16 (Git-Commit 66999ac)
+Inhalt: wie v0.2, dazu Mikrofon IM69D130, Statuslicht, Platine 96 x 127,2 mm, Schale auf transluzenter Bodenplatte
+Status: nur in Software geprueft, nichts bestellt oder an Hardware getestet.
+
+Ordner:
+  README.md, Makefile     Ueberblick und Build-Einstieg
+  docs/                   Pinbelegung
+  hardware/pcb/           KiCad-Projekt, DRC-Bericht, Gerber, Stueckliste, Positionen
+  hardware/enclosure/     CadQuery-Skript, Pruefergebnis, export/ mit STEP und STL
+  hardware/renders/       Renderbilder und Turntable
+  hardware/scripts/       Generatoren

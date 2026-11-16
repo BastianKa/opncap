@@ -1,0 +1,9 @@
+.DS_Store
+# opncap hardware tooling
+.venv*/
+__pycache__/
+*.pyc
+*-backups/
+*.kicad_prl
+fp-info-cache
+hardware/renders/_frames/

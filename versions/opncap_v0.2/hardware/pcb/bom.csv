@@ -1,0 +1,13 @@
+bom.md #,Qty,Designators,Value,Footprint,Description
+1,1,U1,WeAct BlackPill F411,WeAct_BlackPill_F411_2x20_P2.54mm_socketed_face_up,"MCU module on two 1x19 low-profile socket strips, component side up (bom.md #1, sockets #16)"
+3,14,SW1 SW2 SW3 SW4 SW5 SW6 SW7 SW8 SW9 SW10 SW11 SW12 SW13 SW14,Choc V1 hotswap,SW_Choc_V1_Hotswap_Kailh,Kailh Choc hotswap socket CPG135001S30; carries one Choc V1 switch each (bom.md #2 and #3)
+4,16,D1 D2 D3 D4 D5 D6 D7 D8 D9 D10 D11 D12 D13 D14 D15 D16,1N4148W,D_SOD-123,Matrix diode SOD-123
+5,14,LED1 LED2 LED3 LED4 LED5 LED6 LED7 LED8 LED9 LED10 LED11 LED12 LED13 LED14,SK6812 MINI-E,LED_SK6812_MINI-E_reverse,"Per-key RGB LED, reverse mount"
+6,8,LED15 LED16 LED17 LED18 LED19 LED20 LED21 LED22,SK6812 MINI-E,LED_SK6812_MINI-E_reverse,"Underglow RGB LED, reverse mount"
+7,1,ENC1,EC11 with switch,RotaryEncoder_EC11_Switch_Vertical,Rotary encoder with push switch
+8,1,JOY1,Hall joystick 3V3 (placeholder),Joystick_Hall_placeholder_18x18,"Hall-effect joystick with push, placeholder footprint"
+9,1,DISP1,LCD 1.28in round GC9A01 SPI,PinHeader_1x08_P2.54mm_Vertical,Round LCD module GC9A01 on a soldered 1x8 pin header
+10,1,U2,74AHCT125,SOIC-14_3.9x8.7mm_P1.27mm,Level shifter SOIC-14
+11,1,R1,330R,R_0603,LED data series resistor 0603
+12,24,C1 C2 C3 C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 C24,100n,C_0603,Decoupling capacitor 0603
+13,1,C25,220u 10V polymer,CP_EIA-7343-31_Kemet-D,"LED supply bulk capacitor, polymer tantalum EIA 7343"
