@@ -34,6 +34,7 @@ class Controller:
         self.registry = registry or SessionRegistry()
         self._log = log
         self._client: Optional[Client] = None
+        self.debug = False  # log every incoming agent event (for live tests without a pad)
         self._lock = threading.Lock()
         self.engine = engine or Engine(self, log=log)
         self._pending: List["_Pending"] = []  # permission requests waiting for a key, oldest first
@@ -70,6 +71,9 @@ class Controller:
             self._log(f"unknown source {source!r}")
             return
         mapped = claude_code.map_event(payload)
+        if self.debug:
+            self._log(f"event {payload.get('hook_event_name')!r} session={str(payload.get('session_id'))[:8]} "
+                      f"notification_type={payload.get('notification_type')!r} -> {mapped[2] if mapped else 'ignored'}")
         if mapped is None:
             return
         session_id, cwd, state = mapped
@@ -150,13 +154,14 @@ class Server(socketserver.ThreadingUnixStreamServer):
         self.controller = controller
 
 
-def serve(path: Optional[str] = None, controller: Optional[Controller] = None) -> None:
+def serve(path: Optional[str] = None, controller: Optional[Controller] = None, debug: bool = False) -> None:
     path = path or default_socket_path()
     if controller is None:
         log = lambda m: print(f"opncap-daemon: {m}", file=sys.stderr)  # noqa: E731
         bindings = load_bindings(Path.home() / ".config" / "opncap" / "bindings.json")
         controller = Controller(log=log, engine=None)
         controller.engine.bindings = bindings
+    controller.debug = debug
     server = Server(path, controller)
     server.timeout = 1.0
     print(f"opncap-daemon: listening on {path}", file=sys.stderr)
@@ -171,7 +176,7 @@ def serve(path: Optional[str] = None, controller: Optional[Controller] = None) -
 
 def run() -> None:
     try:
-        serve()
+        serve(debug="--debug" in sys.argv[1:])
     except KeyboardInterrupt:
         pass
 

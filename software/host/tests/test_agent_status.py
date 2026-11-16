@@ -114,6 +114,19 @@ class ControllerTest(unittest.TestCase):
         self.c.handle("claude-code", ev("Stop"))
         self.assertTrue(any("rejected" in m for m in self.logs))
 
+    def test_debug_logs_every_event_even_without_a_pad(self):
+        from opncap_host.transport import DeviceNotFound
+
+        def missing():
+            raise DeviceNotFound("no pad")
+
+        c = daemon.Controller(open_transport=missing, log=self.logs.append)
+        c.debug = True
+        c.handle("claude-code", ev("Notification", notification_type="idle_prompt"))
+        c.handle("claude-code", ev("PostToolUse"))
+        self.assertTrue(any("'Notification'" in m and "-> input" in m for m in self.logs))
+        self.assertTrue(any("'PostToolUse'" in m and "ignored" in m for m in self.logs))
+
     def test_unknown_source_is_ignored(self):
         self.c.handle("other", ev("Stop"))
         self.assertEqual(self.pad.written, [])
