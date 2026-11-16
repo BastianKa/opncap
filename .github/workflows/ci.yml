@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi binutils-arm-none-eabi
+      - run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi binutils-arm-none-eabi dfu-util
       - run: pip install qmk
       - name: Fetch pinned QMK firmware
         run: |
@@ -47,4 +47,9 @@ jobs:
           export QMK_HOME="$PWD/qmk_firmware"
           cp -r software/firmware/qmk_userspace/keyboards/opncap "$QMK_HOME/keyboards/"
           qmk compile -kb opncap/opncap_v0_3 -km default
+      - uses: actions/upload-artifact@v4
+        with:
+          name: opncap_v0_3_default
+          path: qmk_firmware/opncap_opncap_v0_3_default.bin
+          if-no-files-found: error
   # A Zephyr placeholder workflow for the BLE bridge follows with phase 2.
