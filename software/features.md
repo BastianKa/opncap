@@ -87,7 +87,7 @@ Sechs Tasten-LEDs im Pad, zusätzlich die Status-LED in der transluzenten Bodenp
 Sechs Tasten, die jeweils einem Chat oder einer Agent-Sitzung zugeordnet sind, für Endnutzer.
 
 **User flow**
-1. Der Nutzer startet mehrere Chats oder Agent-Sitzungen.
+1. Der Nutzer startet mehrere Claude-Code-Sitzungen (später Codex-Sitzungen und Chats der ChatGPT-Desktop-App).
 2. Die Software ordnet sie automatisch den Tasten K1 bis K6 zu, sortiert nach Aktualität, mit Vorrang für angepinnte, aktive und auf Antwort wartende Chats.
 3. Er drückt eine Taste und wechselt zu diesem Chat.
 4. Er drückt die Taste zweimal innerhalb von 350 ms und die Anwendung kommt zusätzlich in den Vordergrund.
@@ -121,7 +121,7 @@ Die Schicht, die Pad-Eingaben in konkrete Aktionen für Anwendungen übersetzt, 
 **User flow**
 1. Das Pad sendet ein Event, zum Beispiel „K8 gedrückt".
 2. Der Host-Dienst schlägt die Belegung für das aktive Profil nach.
-3. Er wählt den passenden Adapter: ChatGPT-Desktop-App, Codex, Claude Code, Terminal oder ein generischer Tastenkürzel-Sender.
+3. Er wählt den passenden Adapter: zuerst Claude Code, danach Codex, später die ChatGPT-Desktop-App, dazu Terminal und ein generischer Tastenkürzel-Sender.
 4. Der Adapter führt die Aktion aus, etwa Anfrage genehmigen, Tastenkürzel senden oder einen Skill starten.
 5. Meldet der Adapter einen Fehler, zeigt das Pad ein rotes Signal und der Host schreibt ein Protokoll.
 
