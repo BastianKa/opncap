@@ -24,4 +24,12 @@ Linux: copy `udev/99-opncap.rules` to `/etc/udev/rules.d/` and reload udev. macO
 
 Mapping (hook event to LED state): `SessionStart` idle, `UserPromptSubmit` and `PreToolUse` thinking, `PermissionRequest` and `Notification` (`permission_prompt`, `idle_prompt`) input, `Stop` done, `StopFailure` error, `SessionEnd` off. Each Claude Code session gets one of the six agent slots by `session_id`. The status light shows the most urgent state. A session stuck in "thinking" for 120 s falls back to idle, because `Stop` does not fire when you interrupt.
 
+## Keys and actions
+
+The daemon reads key events from the pad and runs the action bound to a key. Default bindings: `K8` approve, `K9` deny. Override or add bindings in `~/.config/opncap/bindings.json`, for example `{"K1": "hotkey:ctrl+shift+k"}`. Actions today: `approve`, `deny`, `hotkey:<combo>` (xdotool on Linux, osascript on macOS; the combo is restricted to letters, digits, `+`, `-`, `_`).
+
+**Approve and deny with the pad:** the `PermissionRequest` hook in `docs/claude-code-hooks.json` runs `micro-hook claude-code --wait 25`. The daemon turns the session's key orange and holds the request until you press approve or deny; `micro-hook` then prints the decision for Claude Code. After 25 s without a key press it prints nothing and Claude Code asks in the terminal as usual. If several requests wait, the most recent one is answered.
+
+Open points [prüfen]: the exact `deny` answer shape and what Claude Code does when a hook blocks for long (timeouts) are not verified against a live session. The firmware keymap still binds `K11` to a layer switch, which will collide with a push-to-talk binding on `K11`. Not built: switching to an agent's chat per Agent Key (no documented way to focus a terminal session from outside), double-press, Command Keys other than approve/deny.
+
 Status: tested with a fake pad and a real Unix socket, **not with a live Claude Code session or a real pad**. The firmware drives the LEDs (see `firmware/README.md`, itself untested on hardware); a pad with older firmware answers with `unknown_message`, the daemon logs that and keeps running. Not yet built: `PostToolUseFailure` flash, tray icon, autostart, pinned/recent chat ordering.
