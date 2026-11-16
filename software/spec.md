@@ -10,7 +10,7 @@ Die Software besteht aus vier Teilen: der QMK-Firmware auf dem Pad, einem versio
 
 ## Ziele
 
-- Phase 1 (kabelgebunden): Firmware, Protokoll v1, Host-Dienst und CLI laufen unter Linux, macOS und Windows, die CI ist grün.
+- Phase 1 (kabelgebunden): Firmware, Protokoll v1, Host-Dienst und CLI laufen unter Linux und macOS, die CI ist grün; Windows folgt nach der stabilen Python-Version.
 - Der Zustand von Claude-Code-Sitzungen erscheint ohne Fensterwechsel auf den Agent Keys.
 - Eine Aktions-Engine mit Adapterschnittstelle, sodass Codex und die ChatGPT-Desktop-App ohne Umbau des Kerns folgen können.
 - Eine Konfigurations-App, in der alle Belegungen geändert werden, ohne Firmware neu zu bauen.
@@ -37,7 +37,7 @@ Die Software besteht aus vier Teilen: der QMK-Firmware auf dem Pad, einem versio
 
 ### 1. Repository, Lizenzen und CI
 
-Ordner `software/` mit `firmware/`, `protocol/`, `host/`, `app/` und `docs/`. CI auf Ubuntu, macOS und Windows: Firmware-Build, Protokoll-Tests, Lint und Tests der Host-Software. SPDX-Header in jeder Datei, `docs/licensing.md` beschreibt die Grenze zwischen GPL und Apache. Code, Kommentare, Commits und Doku sind auf Englisch.
+Ordner `software/` mit `firmware/`, `protocol/`, `host/`, `app/` und `docs/`. CI auf Ubuntu und macOS (Windows später): Firmware-Build, Protokoll-Tests, Lint und Tests der Host-Software. SPDX-Header in jeder Datei, `docs/licensing.md` beschreibt die Grenze zwischen GPL und Apache. Code, Kommentare, Commits und Doku sind auf Englisch.
 
 ### 2. Raw-HID-Protokoll v1
 
@@ -49,7 +49,7 @@ QMK-Userspace auf dem WeAct BlackPill F411 in fester Version. 14 Tasten in einer
 
 ### 4. Host-Dienst und CLI `micro-state`
 
-Hintergrunddienst in Python mit `hidapi`, Auswahl des Geräts über VID/PID und Usage Page. CLI `micro-state idle|thinking|done|input|error` mit `--device`, `--timeout` und klaren Exit-Codes. Linux mit mitgelieferten udev-Regeln, macOS mit Berechtigung „Input Monitoring", Windows **[prüfen]**. Später ein Rust-Rewrite.
+Hintergrunddienst in Python mit `hidapi`, Auswahl des Geräts über VID/PID und Usage Page. CLI `micro-state idle|thinking|done|input|error` mit `--device`, `--timeout` und klaren Exit-Codes. Linux mit mitgelieferten udev-Regeln, macOS mit Berechtigung „Input Monitoring". Windows ist in Phase 1 nicht unterstützt. Später ein Rust-Rewrite.
 
 ### 5. Agent-Status und Agent Keys
 
@@ -65,7 +65,21 @@ Die Engine schlägt zu jedem Event die Belegung im aktiven Profil nach und führ
 
 #### Claude-Code-Adapter (Phase 1)
 
-Zustände kommen über Claude-Code-Hooks, die `micro-state` aufrufen. Vorgesehene Zuordnung **[prüfen gegen die aktuelle Hook-Dokumentation]**: `UserPromptSubmit` und `PreToolUse` → blau, `Notification` (Freigabe nötig) → orange, `Stop` → grün, Fehler eines Hooks oder Tools → rot, `SessionStart` → weiß. Freigaben und Ablehnungen sowie Eingaben laufen über den Adapter in die Sitzung (Tastenanschläge ins Terminal oder, falls verfügbar, direkte Entscheidung per Hook). Mehrere Sitzungen werden über Sitzungs-ID und Arbeitsverzeichnis getrennt.
+Zustände kommen über Claude-Code-Hooks (laut Hooks-Dokumentation geprüft, Stand der Recherche), die `micro-state` oder den Host-Dienst aufrufen. Jede Hook-Eingabe enthält `session_id` und `cwd`; damit werden parallele Sitzungen getrennt und beim `SessionStart` einer Agent-Taste zugeordnet.
+
+| Hook-Ereignis | LED-Zustand |
+|---|---|
+| `SessionStart` | weiß |
+| `UserPromptSubmit`, `PreToolUse` | blau |
+| `PermissionRequest`, `Notification` mit `permission_prompt` oder `idle_prompt` | orange |
+| `Stop` | grün |
+| `StopFailure` (API-Fehler) | rot |
+| `PostToolUseFailure` | kurzes rotes Blinken, Zustand bleibt blau |
+| `SessionEnd` | aus |
+
+Freigabe und Ablehnung laufen über einen `PermissionRequest`-Hook, der eine Entscheidung zurückgeben kann (Command- oder HTTP-Hook). Der Host-Dienst hält die Anfrage offen, bis der Nutzer die Freigabe- oder Ablehnen-Taste drückt, und liefert dann `allow` oder `deny`. Einen dokumentierten Weg, Tastenanschläge von außen in eine laufende interaktive Sitzung zu schicken, gibt es nicht.
+
+Offen und vor dem Bau zu testen **[prüfen]**: genaue Form der `deny`-Antwort, Verhalten bei Zeitüberschreitung des Hooks (Rückfall auf die normale Abfrage im Terminal muss funktionieren), Timeout-Standardwert (Dokumentation widersprüchlich, daher `timeout` explizit setzen), Matcher-Syntax für `PermissionRequest`. Außerdem feuert `Stop` nicht bei einem Abbruch durch den Nutzer; der Adapter braucht deshalb eine Zeitüberwachung, damit eine Taste nicht dauerhaft blau bleibt.
 
 #### Codex-Adapter (Phase 1b)
 
@@ -85,7 +99,7 @@ Vier Modi: Composer-Navigation, nur Reasoning, Konversations-Scrollen, eigene Be
 
 ### 10. Sprachsteuerung
 
-Push-to-Talk auf K13 (halten), Dauermodus per Doppeldruck innerhalb von 350 ms, Senden über eine Command Key, Sprachchat und Stummschaltung auf K14. Das Pad hat ein eigenes PDM-Mikrofon, alternativ nutzt die Software das Rechner-Mikrofon. Der Transportweg der Audiodaten (USB-Audio oder anderer Kanal) ist noch offen **[prüfen]**. LED-Rückmeldung: türkis bei Aufnahme, bewegtes Weiß bei Verarbeitung, Weiß bei bereitem Text.
+Push-to-Talk auf K13 (halten), Dauermodus per Doppeldruck innerhalb von 350 ms, Senden über eine Command Key, Sprachchat und Stummschaltung auf K14. **Phase 1 nutzt das Mikrofon des Rechners:** die Tasten lösen das Diktat des Rechners oder der Anwendung aus. Das Pad hat zwar ein PDM-Mikrofon (IM69D130 an B3/B5 über I2S3), aber dafür fehlt die Firmware: Der PDM-Strom müsste gelesen, zu PCM gefiltert und als USB-Audio-Schnittstelle neben der Tastatur angeboten werden, und QMK bietet dafür keine Unterstützung. Das ist ein eigenes späteres Firmware-Projekt. Bis dahin ist das Mikrofon nur Hardware-Vorbereitung. LED-Rückmeldung: türkis bei Aufnahme, bewegtes Weiß bei Verarbeitung, Weiß bei bereitem Text.
 
 ### 11. Display und Beleuchtung
 
@@ -93,7 +107,7 @@ Das runde GC9A01-Display zeigt Uhrzeit, Layer, Agent-Zustand, Radial-Menü, Pege
 
 ### 12. Konfigurations-App und Profile
 
-Grafische App für Linux, macOS und Windows (zuerst Python, später optional Tauri **[prüfen]**). Ansicht mit Pad-Grafik, Belegung pro Taste, Encoder und Joystick-Richtung, Layer und anwendungsabhängige Profile. Bis zu fünf zusätzliche Layer über den KI-Layer hinaus. Zurücksetzen setzt Command Keys und Joystick auf Standard, die Agent-Key-Zuordnung bleibt. Export und Import als Datei.
+Grafische App für Linux und macOS (zuerst Python, später optional Tauri **[prüfen]**). Ansicht mit Pad-Grafik, Belegung pro Taste, Encoder und Joystick-Richtung, Layer und anwendungsabhängige Profile. Bis zu fünf zusätzliche Layer über den KI-Layer hinaus. Zurücksetzen setzt Command Keys und Joystick auf Standard, die Agent-Key-Zuordnung bleibt. Export und Import als Datei.
 
 ### 13. Einrichtung und Diagnose
 
@@ -117,4 +131,4 @@ STM32 über USB-DFU, später per Brücke (UART und ST-ROM-Bootloader, Brücke st
 - **Konfigurations-App** — zuerst Python, optional Tauri
 - **Adapter** — Claude Code (Hooks), Codex, ChatGPT-Desktop-App
 - **BLE (Phase 2)** — nRF52840, Zephyr, MCUboot
-- **CI** — GitHub Actions (Ubuntu, macOS, Windows)
+- **CI** — GitHub Actions (Ubuntu, macOS; Windows später)

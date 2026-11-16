@@ -10,7 +10,7 @@ Das Grundgerüst für alle Software-Teile (Firmware, Protokoll, Host-Dienst, Kon
 1. Der Entwickler klont das Repo und öffnet den Ordner `software/` mit den Unterordnern `firmware/`, `protocol/`, `host/`, `app/` und `docs/`.
 2. Er liest `docs/licensing.md` und erfährt, welche Teile GPL-2.0-or-later (QMK) und welche Apache-2.0 sind.
 3. Er pusht einen Commit oder Pull Request.
-4. Die CI baut die Firmware, führt die Protokoll- und Host-Tests auf Ubuntu, macOS und Windows aus und prüft Lint und Format.
+4. Die CI baut die Firmware, führt die Protokoll- und Host-Tests auf Ubuntu und macOS aus und prüft Lint und Format.
 5. Er sieht das Ergebnis als grünen oder roten Status am Commit.
 
 **UI overview**
@@ -172,7 +172,7 @@ Diktat und Sprachchat über das Pad, für Endnutzer.
 3. Er drückt K13 zweimal innerhalb von 350 ms und startet eine dauerhafte Aufnahme, die ein weiterer Druck beendet.
 4. Er drückt die Senden-Taste und der erkannte Text wird abgeschickt.
 5. Er startet über K14 einen Sprachchat, schaltet das Mikrofon dort stumm oder beendet ihn mit langem Druck.
-6. Er wählt in den Einstellungen, ob das Mikrofon des Pads oder das des Rechners verwendet wird.
+6. Er nutzt in Phase 1 das Mikrofon des Rechners; das Pad-Mikrofon wird erst nutzbar, wenn die zugehörige Firmware existiert.
 
 **UI overview**
 Türkises Licht während der Aufnahme, bewegtes weißes Licht bei der Verarbeitung, dauerhaft weiß, wenn der Text bereit ist. Das Display zeigt eine Pegelanzeige. K13 und K14 sind getrennt belegbar.
@@ -224,7 +224,7 @@ Eine grafische Oberfläche, in der der Nutzer alle Belegungen und Einstellungen 
 6. Er exportiert oder importiert die Konfiguration als Datei.
 
 **UI overview**
-Fenster mit Pad-Grafik links und Detailbereich rechts. Geänderte, nicht gespeicherte Werte sind markiert. Die App läuft unter Linux, macOS und Windows und nutzt dieselben Befehle wie die CLI.
+Fenster mit Pad-Grafik links und Detailbereich rechts. Geänderte, nicht gespeicherte Werte sind markiert. Die App läuft unter Linux und macOS und nutzt dieselben Befehle wie die CLI.
 
 ---
 
